@@ -4,8 +4,10 @@ const fs = require("fs");
 
 //Requiring classes
 const Employee = require("./lib/Employee");
-const Manager = require("./lib/Manager")
-const Intern = require("./lib/Intern")
+const Manager = require("./lib/Manager");
+const Intern = require("./lib/Intern");
+const Engineer = require("./lib/Engineer");
+
 var team = [];
 
 //Manager prompt
@@ -72,9 +74,14 @@ const buildEmployee = () => {
       message: 'Engineers GitHub useranme:',
       when: (input) => input.role === "Engineer"
     },
+    {
+      type: 'confirm',
+      name: 'addMore',
+      message: 'Would you like to add more employees?'
+    }
   ])
   .then(employeeInput => {
-    let {name, id, email, role, github, school,} = employeeInput
+    let {name, id, email, role, github, school, addMore} = employeeInput
     let employee;
 
     if (role === "Engineer"){
@@ -83,11 +90,21 @@ const buildEmployee = () => {
       employee = new Intern (name, id, email, school)
     }
     team.push(Employee);
+    
+    if (addMore){
+      return buildEmployee(team);
+    }
+    else {
+      return team;
+    }
   })
+
 };
-console.log(Employee);
+
 
 buildManager()
 .then(buildEmployee)
-
+.then(teamArray => {
+  return buildPage(team);
+})
 // const writeFile = fs.writeFile('./dist', index.html')
