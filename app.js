@@ -1,74 +1,74 @@
 const inquirer = require("inquirer");
+const fs = require("fs");
 const Employee = require("./lib/Employee");
+const Manager = require("./lib/Manager")
 
+var team = [];
 
-let Employee = new Employee (name, id, email);
+const buildManager = () => {
+ return inquirer.prompt ([
+    {
+      type: 'input',
+      name:'name',
+      message: 'Team Manager name:'
+    },
+    {
+      type: 'input',
+      name: 'id',
+      message: 'Manager ID number:'
+    },
+    {
+      type: 'input',
+      name: 'email',
+      message: 'Manager email address:'
+    },
+    {
+      type: 'input',
+      name: 'officeNumber',
+      message: 'Manager office number:'
+    },
 
-const questions = const questions =[
+  ])
+  .then (managerData => {
+    const { name, id, email, officeNumber} = managerData;
+    const manager = new Manager (name, id, email, officeNumber);
+
+    team.push (manager);
+    console.log(manager);
+  })
+}; 
+
+const buildEmployee = () => {
+  return inquirer.prompt ([
     {
-      type: 'input',
-      name: 'Name',
-      message: 'Name:',
+      type: 'list',
+      name:'role',
+      message: 'Select a role:'
+      choices: ['Engineer', 'Intern']
     },
     {
       type: 'input',
-      name: 'ID',
-      message: 'Write a description of this project',
-    },
-    {
-        type: 'input',
-        name: 'Built With',
-        message: 'What did you use to build this project?',
-      },
-    {
-      type: 'input',
-      name: 'Installation',
-      message: 'What are the steps required to install your project:',
+      name: 'id',
+      message: 'Manager ID number:'
     },
     {
       type: 'input',
-      name: 'Usage',
-      message: 'How is this application used? Be descriptive:',
-    },
-    {
-      type: 'input',
-      name: 'Credits',
-      message: 'List resources used and additional contributors:',
-    },
-    {
-        type: 'list',
-        name: 'license',
-        message: 'What licence would you like to use?',
-        choices: ['MIT','Apache 2.0','GNU GPL 3.0']
-      },
-      {
-        type: 'input',
-        name: 'Tests',
-        message: 'What tests can be run?',
-      },
-      {
-        type: 'input',
-        name: 'repo',
-        message: 'Link to repository:',
-      },
-      {
-        type: 'input',
-        name: 'email',
-        message: 'Your email address:',
-      },
-      {
-        type: 'input',
-        name: 'username',
-        message: 'Your gitHub username:',
-      },
-      {
-        type: 'input',
-        name: 'contribute',
-        message: 'Ways to contribute:',
-      },
-      {
-        type: 'input',
-        name: 'deployed',
-        message: 'link to deployed application:',
-      },
-    ];
+      name: 'email',
+      message: 'Manager email address:'
+    }
+  ])
+  .then(employeeInput => {
+    let {name, id, email, role, github, school} = employeeInput
+    let employee;
+
+    if (role === "Engineer"){
+      employee = new Engineer (name, id, email, github)
+    } else if (role === "Intern"){
+      employee = new Intern (name, id, email, school)
+      
+    }
+  }
+}
+
+buildManager()
+.then(buildEmployee)
