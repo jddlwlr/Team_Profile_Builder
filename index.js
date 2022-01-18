@@ -8,7 +8,12 @@ const Manager = require("./lib/Manager");
 const Intern = require("./lib/Intern");
 const Engineer = require("./lib/Engineer");
 
-var team = [];
+const buildCard = require("./src/cardBuilder.js");
+
+
+
+var team= [];
+var manager;
 
 //Manager prompt
 const buildManager = () => {
@@ -37,10 +42,10 @@ const buildManager = () => {
   ])
   .then (managerData => {
     const { name, id, email, officeNumber} = managerData;
-    const manager = new Manager (name, id, email, officeNumber);
+    var manager = new Manager (name, id, email, officeNumber);
 
-    team.push (manager);
-    console.log(manager);
+    team.push(manager)
+    return manager
   })
 }; 
 //Employee prompt
@@ -81,7 +86,7 @@ const buildEmployee = () => {
     }
   ])
   .then(employeeInput => {
-    let {name, id, email, role, github, school, addMore} = employeeInput
+    const {name, id, email, role, github, school, addMore} = employeeInput
     let employee;
 
     if (role === "Engineer"){
@@ -89,22 +94,50 @@ const buildEmployee = () => {
     } else if (role === "Intern"){
       employee = new Intern (name, id, email, school)
     }
-    team.push(Employee);
-    
+    team.push(employee);
+
     if (addMore){
       return buildEmployee(team);
     }
     else {
+      console.log(team)
       return team;
     }
+    
+    
   })
 
 };
 
+function buildHtml() {
+  buildCard(manager);
+  writeHtml(buildCard);
 
+   
+};
+
+const writeHtml = (data) => {
+  return fs.writeFileSync("./dist/index.html", data, err => {
+    if (err){
+      console.log(console.log(err))
+    } else {console.log('success!')}
+  })
+}
+
+function init (){
 buildManager()
 .then(buildEmployee)
-.then(teamArray => {
-  return buildPage(team);
+.then(buildHtml)
+.catch(err => {
+    console.log(err);
+  
 })
+
+}
+
+
+init();
+module.exports = team;
+
 // const writeFile = fs.writeFile('./dist', index.html')
+
